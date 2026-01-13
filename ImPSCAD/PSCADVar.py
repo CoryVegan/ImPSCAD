@@ -100,10 +100,14 @@ def PSCADVar(path, file_name, del_out = False):
         for ii in range(0, last_col[file_]):
             dff[file_].rename(columns = {ii:header[ii + jj]}, inplace = True)
         jj = jj + 11
+    for i, df in enumerate(dff):
+        df.columns = ['time'] + [f"{col}_{i}" for col in df.columns[1:]]
 
+    # merge
+    df_merged = reduce(lambda left, right: pd.merge(left, right, on='time'), dff)
     # Now that the headers are done, merge all of them (2 by 2) using the column 'time' as reference
-    df_merged = reduce(lambda  left, right: pd.merge(left, right, on = 'time'), dff)
-
+    # df_merged = reduce(lambda  left, right: pd.merge(left, right, on = 'time'), dff)
+    # df_merged = reduce(lambda left, right: pd.merge(left, right, on='time', suffixes=('_l', '_r')),    dff)
     # Storage all the dataframe into one csv file with header
     df_merged.to_csv(CSV_path, index = False)    
 
